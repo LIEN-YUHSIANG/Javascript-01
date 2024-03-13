@@ -18,20 +18,6 @@ if(navigator.geolocation){
     const {latitude} = position.coords; // Use distructuring assignment to the object
     const {longitude} = position.coords;
     console.log(`https://www.google.com.tw/maps/@P${latitude},${longitude},7z?entry=ttu`);
-
-    const coords = [latitude, longitude]
-
-    const map = L.map('map').setView(coords, 13);
-    // When having multiple scripts in the HTML, the one in the later order will have access to all the global var that the earlier script have.
-
-    L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-
-    L.marker(coords).addTo(map)
-        .bindPopup('A pretty CSS popup.<br> Easily customizable.')
-        .openPopup();
-    
     console.log(latitude, longitude);
     }, function() {
     alert('Could not get your position');
