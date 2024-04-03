@@ -1,4 +1,4 @@
-// Working with localStorage => v243
+// Creating a New Workout => v240, Rendering Workouts => v241
 'use strict';
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6,7 +6,6 @@
 class Workout {
   date = new Date();
   id = (Date.now() + ``).slice(-10);
-  clicks = 0;
 
   constructor(coords, distance, duration) {
     this.coords = coords; // [lat, lng]
@@ -21,10 +20,6 @@ class Workout {
     this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
       months[this.date.getMonth()]
     } ${this.date.getDate()}`;
-  }
-
-  click() {
-    this.clicks++;
   }
 }
 
@@ -74,22 +69,14 @@ const inputElevation = document.querySelector('.form__input--elevation');
 class App {
   // Create private fields
   #map;
-  #mapZoomLevel = 13;
   #mapEvent;
   #workouts = [];
 
   // Constructor function is triggered when ever a new object is instantiated from a class
   constructor() {
-    // Get user's position
     this._getPosition();
-
-    // Get data from local storage
-    this._getLocalStorage();
-
-    // Attach event handlers
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationFoeld);
-    containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
   }
 
   _getPosition() {
@@ -106,14 +93,14 @@ class App {
   _loadMap(position) {
     const { latitude } = position.coords; // Use distructuring assignment to the object
     const { longitude } = position.coords;
-    // console.log(
-    //   `https://www.google.com.tw/maps/@P${latitude},${longitude},7z?entry=ttu`
-    // );
+    console.log(
+      `https://www.google.com.tw/maps/@P${latitude},${longitude},7z?entry=ttu`
+    );
 
     const coords = [latitude, longitude];
 
-    // console.log(this);
-    this.#map = L.map('map').setView(coords, this.#mapZoomLevel); // Make the map into a global variable
+    console.log(this);
+    this.#map = L.map('map').setView(coords, 13); // Make the map into a global variable
 
     L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
       attribution:
@@ -124,11 +111,6 @@ class App {
     this.#map.on(`click`, this._showForm.bind(this));
     // Since `this` keyword of a callback function will be point to the object where the eventlistener is attached, in this case `#map`,
     // so we need to use `bind()` method to manually set the `this` as the app object
-
-    this.#workouts.forEach(work => {
-      // Since we have to wait for the map object to be loaded to add a marker on to it, we render the marker over here to avoid error
-      this._renderWorkoutMarker(work);
-    });
   }
 
   _showForm(mapE) {
@@ -199,11 +181,9 @@ class App {
       // Simply redefine workout variable so that we can use it outside of this function scope
     }
 
-    // Multiple function delegation help us write better codes
-
     // Add new object to workout array
     this.#workouts.push(workout);
-    // console.log(workout);
+    console.log(workout);
 
     // Render workout on map as marker
     this._renderWorkout(workout);
@@ -213,9 +193,6 @@ class App {
 
     // Hide form + clear inpurt field
     this._hideForm();
-
-    //  Set local storage to all workouts
-    this._setLocalStorage();
   }
 
   _renderWorkoutMarker(workout) {
@@ -241,7 +218,7 @@ class App {
         <li class="workout workout--${workout.type}" data-id="${workout.id}">
           <h2 class="workout__title">${workout.description}</h2>
           <div class="workout__details">
-            <span class="workout__icon">${
+            <span class="workout__icon">🏃${
               workout.type === `running` ? `🏃‍♂️` : `🚴‍♀️`
             }</span>
             <span class="workout__value">${workout.distance}</span>
@@ -285,56 +262,6 @@ class App {
     }
 
     form.insertAdjacentHTML('afterend', html); // Insert the html as sibling element to the `form` element
-  }
-
-  _moveToPopup(e) {
-    const workoutEl = e.target.closest('.workout');
-
-    if (!workoutEl) return;
-
-    const workout = this.#workouts.find(
-      work => work.id === workoutEl.dataset.id
-    );
-    // console.log(workout);
-
-    this.#map.setView(workout.coords, this.#mapZoomLevel, {
-      animate: true,
-      pan: {
-        duration: 1,
-      },
-    });
-
-    // using the public interface
-    // After getting the data from the local storage, we will lose the prototype chain, so any special function we create will no longer available unless we restore the
-    // object.
-    // workout.click();
-  }
-
-  _setLocalStorage() {
-    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
-  }
-
-  _getLocalStorage() {
-    const data = JSON.parse(localStorage.getItem('workouts'));
-    // console.log(data);
-
-    // Add a guard clause
-    if (!data) return;
-
-    this.#workouts = data;
-
-    this.#workouts.forEach(work => {
-      this._renderWorkout(work);
-
-      // Since we run this method at the constrictor function, it means that we are trying to add a marker on the `map` object before it is loaded,
-      // so here will be an error.
-      // this._renderWorkoutMarker(work);
-    });
-  }
-
-  reset() {
-    localStorage.removeItem('workouts');
-    location.reload();
   }
 }
 

@@ -1,3 +1,5 @@
+// Using Geolocation API => v233
+
 'use strict';
 
 // prettier-ignore
@@ -13,13 +15,18 @@ const inputElevation = document.querySelector('.form__input--elevation');
 
 // Use Geolocation API
 
-if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(function(position){
-    const {latitude} = position.coords; // Use distructuring assignment to the object
-    const {longitude} = position.coords;
-    console.log(`https://www.google.com.tw/maps/@P${latitude},${longitude},7z?entry=ttu`);
-    console.log(latitude, longitude);
-    }, function() {
-    alert('Could not get your position');
-    })   
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    function (position) {
+      const { latitude } = position.coords; // Use distructuring assignment to the object
+      const { longitude } = position.coords;
+      console.log(
+        `https://www.google.com.tw/maps/@P${latitude},${longitude},7z?entry=ttu`
+      );
+      console.log(latitude, longitude);
+    },
+    function () {
+      alert('Could not get your position');
+    }
+  );
 }

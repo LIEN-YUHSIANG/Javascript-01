@@ -1,4 +1,4 @@
-// Using Leaflet Library => v234
+// Displaying Map Marker => v235
 
 'use strict';
 
@@ -15,6 +15,8 @@ const inputElevation = document.querySelector('.form__input--elevation');
 
 // Use Geolocation API
 
+let map, mapEvent;
+
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(
     function (position) {
@@ -26,23 +28,58 @@ if (navigator.geolocation) {
 
       const coords = [latitude, longitude];
 
-      const map = L.map('map').setView(coords, 13);
+      map = L.map('map').setView(coords, 13); // Make the map into a global variable
       // When having multiple scripts in the HTML, the one in the later order will have access to all the global var that the earlier script have.
+
+      // console.log(map);
 
       L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
-      L.marker(coords)
-        .addTo(map)
-        .bindPopup('A pretty CSS popup.<br> Easily customizable.')
-        .openPopup();
-
-      console.log(latitude, longitude);
+      // Handling clicks on map
+      map.on(`click`, function (mapE) {
+        mapEvent = mapE; // Make the mapE into a global variable
+        form.classList.remove(`hidden`);
+        inputDistance.focus();
+      });
     },
     function () {
       alert('Could not get your position');
     }
   );
 }
+
+form.addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  // Clear input fields
+  inputDistance.value =
+    inputDuration.value =
+    inputCadence.value =
+    inputElevation.value =
+      '';
+
+  // Display marker
+  const { lat, lng } = mapEvent.latlng;
+  L.marker([lat, lng])
+    .addTo(map)
+    .bindPopup(
+      L.popup({
+        maxWidth: 250,
+        minWidth: 100,
+        autoClose: false,
+        closeOnClick: false,
+        className: `running-popup`,
+      })
+    )
+    .setPopupContent(`Workout`)
+    .openPopup();
+});
+
+// Show the elevation or cadence
+inputType.addEventListener('change', function () {
+  inputElevation.closest(`.form__row`).classList.toggle(`form__row--hidden`);
+  inputCadence.closest(`.form__row`).classList.toggle(`form__row--hidden`);
+});

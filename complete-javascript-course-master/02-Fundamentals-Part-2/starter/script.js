@@ -429,7 +429,7 @@ while (dice !== 6) {
     dice = Math.trunc(Math.random() * 6) + 1;
     if (dice === 6) console.log('loop is about to end...');
 }
-*/ 
+*/
 
 //* Challenge 4
 
@@ -457,7 +457,7 @@ console.log(totals);
 
 function calcAverage(arr) {
     let sum = 0;
-    for (let i = 0; i < arr.length; i++ ){
+    for (let i = 0; i < arr.length; i++) {
         sum += arr[i];
     }
     return sum / arr.length;
