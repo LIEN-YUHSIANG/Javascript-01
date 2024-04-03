@@ -117,74 +117,123 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"node_modules/parcel/src/builtins/bundle-url.js":[function(require,module,exports) {
-var bundleURL = null;
+})({"clean.js":[function(require,module,exports) {
+'strict mode';
 
-function getBundleURLCached() {
-  if (!bundleURL) {
-    bundleURL = getBundleURL();
-  }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-  return bundleURL;
-}
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function getBundleURL() {
-  // Attempt to find the URL of the current script and use that as the base URL
-  try {
-    throw new Error();
-  } catch (err) {
-    var matches = ('' + err.stack).match(/(https?|file|ftp|chrome-extension|moz-extension):\/\/[^)\n]+/g);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-    if (matches) {
-      return getBaseURL(matches[0]);
-    }
-  }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
-  return '/';
-}
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function getBaseURL(url) {
-  return ('' + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)\/[^/]+$/, '$1') + '/';
-}
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-exports.getBundleURL = getBundleURLCached;
-exports.getBaseURL = getBaseURL;
-},{}],"node_modules/parcel/src/builtins/css-loader.js":[function(require,module,exports) {
-var bundle = require('./bundle-url');
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
 
-function updateLink(link) {
-  var newLink = link.cloneNode();
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
-  newLink.onload = function () {
-    link.remove();
-  };
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-  newLink.href = link.href.split('?')[0] + '?' + Date.now();
-  link.parentNode.insertBefore(newLink, link.nextSibling);
-}
+var budget = Object.freeze([{
+  value: 250,
+  description: 'Sold old TV 📺',
+  user: 'jonas'
+}, {
+  value: -45,
+  description: 'Groceries 🥑',
+  user: 'jonas'
+}, {
+  value: 3500,
+  description: 'Monthly salary 👩‍💻',
+  user: 'jonas'
+}, {
+  value: 300,
+  description: 'Freelancing 👩‍💻',
+  user: 'jonas'
+}, {
+  value: -1100,
+  description: 'New iPhone 📱',
+  user: 'jonas'
+}, {
+  value: -20,
+  description: 'Candy 🍭',
+  user: 'matilda'
+}, {
+  value: -125,
+  description: 'Toys 🚂',
+  user: 'matilda'
+}, {
+  value: -1800,
+  description: 'New Laptop 💻',
+  user: 'jonas'
+}]);
+var spendingLimits = Object.freeze({
+  jonas: 1500,
+  matilda: 100
+}); // spendingLimits.jay = 200;
+// const limit = spendingLimits[user] ? spendingLimits[user] : 0;
 
-var cssTimeout = null;
+var getLimit = function getLimit(limits, user) {
+  var _limits$user;
 
-function reloadCSS() {
-  if (cssTimeout) {
-    return;
-  }
+  return (_limits$user = limits === null || limits === void 0 ? void 0 : limits[user]) !== null && _limits$user !== void 0 ? _limits$user : 0;
+}; // Pure function :D
 
-  cssTimeout = setTimeout(function () {
-    var links = document.querySelectorAll('link[rel="stylesheet"]');
 
-    for (var i = 0; i < links.length; i++) {
-      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
-        updateLink(links[i]);
-      }
-    }
+var addExpense = function addExpense(state, limits, value, description) {
+  var user = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'jonas';
+  var cleanUser = user.toLowerCase();
+  return value <= getLimit(limits, cleanUser) ? [].concat(_toConsumableArray(state), [{
+    value: -value,
+    description: description,
+    user: cleanUser
+  }]) : state;
+};
 
-    cssTimeout = null;
-  }, 50);
-}
+var newBudget1 = addExpense(budget, spendingLimits, 10, 'Pizza 🍕');
+var newBudget2 = addExpense(newBudget1, spendingLimits, 100, 'Going to movies 🍿', 'Matilda');
+var newBudget3 = addExpense(newBudget2, spendingLimits, 200, 'Stuff', 'Jay'); // const checkExpenses2 = function (state, limits) {
+//   return state.map(entry => {
+//     return entry.value < -getLimit(limits, entry.user)
+//       ? { ...entry, flag: 'limit' }
+//       : entry;
+//   });
+//   // for (const entry of newBudget3)
+//   //   if (entry.value < -getLimit(limits, entry.user)) entry.flag = 'limit';
+// };
 
-module.exports = reloadCSS;
-},{"./bundle-url":"node_modules/parcel/src/builtins/bundle-url.js"}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+var checkExpenses = function checkExpenses(state, limits) {
+  return state.map(function (entry) {
+    return entry.value < -getLimit(limits, entry.user) ? _objectSpread(_objectSpread({}, entry), {}, {
+      flag: 'limit'
+    }) : entry;
+  });
+};
+
+var finalBudget = checkExpenses(newBudget3, spendingLimits);
+console.log(finalBudget); // Impure
+
+var logBigExpenses = function logBigExpenses(state, bigLimit) {
+  var bigExpenses = state.filter(function (entry) {
+    return entry.value <= -bigLimit;
+  }).map(function (entry) {
+    return entry.description.slice(-2);
+  }).join(' / '); // .reduce((str, cur) => `${str} / ${cur.description.slice(-2)}`, '');
+
+  console.log(bigExpenses); // let output = '';
+  // for (const entry of budget)
+  //   output +=
+  //     entry.value <= -bigLimit ? `${entry.description.slice(-2)} / ` : '';
+  // output = output.slice(0, -2); // Remove last '/ '
+  // console.log(output);
+};
+
+logBigExpenses(finalBudget, 500);
+},{}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -388,5 +437,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["node_modules/parcel/src/builtins/hmr-runtime.js"], null)
-//# sourceMappingURL=/index.js.map
+},{}]},{},["node_modules/parcel/src/builtins/hmr-runtime.js","clean.js"], null)
+//# sourceMappingURL=/clean.55562fe9.js.map
