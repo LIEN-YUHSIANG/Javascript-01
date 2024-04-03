@@ -1,0 +1,19 @@
+{
+  "name": "javascript-01",
+  "description": "Personal learning repository",
+  "version": "1.0.0",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "parcel build /complete-javascript-course-master/17-Modern-JS-Modules-Tooling/starter/index.html"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "lodash-es": "^4.17.21"
+  },
+  "devDependencies": {
+    "parcel": "^2.12.0"
+  }
+}
